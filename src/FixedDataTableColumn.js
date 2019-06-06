@@ -184,7 +184,6 @@ class FixedDataTableColumn extends React.Component {
  };
 
  static defaultProps = {
-   allowCellsRecycling: false,
    fixed: false,
    fixedRight: false,
  };

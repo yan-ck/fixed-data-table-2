@@ -38,6 +38,11 @@ class FixedDataTableRowImpl extends React.Component {
 
   static propTypes = {
 
+    /**
+     * Only columns within the viewport will be considered for rendering.
+     */
+    allowColumnVirtualization: PropTypes.bool,
+
     isScrolling: PropTypes.bool,
 
     /**
@@ -82,6 +87,26 @@ class FixedDataTableRowImpl extends React.Component {
      * Array of data for the scrollable columns.
      */
     scrollableColumns: PropTypes.array.isRequired,
+
+    /**
+     * The list of columns to render.
+     */
+    columnsToRender: PropTypes.array,
+
+    /**
+     * The offsets of the scrollable columns
+     */
+    columnOffsets: PropTypes.oneOfType([PropTypes.object.isRequired, PropTypes.array.isRequired]),
+
+    /**
+     * The offsets of the fixed columns
+     */
+    fixedColumnOffsets: PropTypes.array.isRequired,
+
+    /**
+     * The offsets of the fixed right columns
+     */
+    fixedRightColumnOffsets: PropTypes.array.isRequired,
 
     /**
      * The distance between the left edge of the table and the leftmost portion
@@ -181,6 +206,7 @@ class FixedDataTableRowImpl extends React.Component {
         width={fixedColumnsWidth}
         zIndex={2}
         columns={this.props.fixedColumns}
+        columnOffsets={this.props.fixedColumnOffsets}
         touchEnabled={this.props.touchEnabled}
         onColumnResize={this.props.onColumnResize}
         onColumnReorder={this.props.onColumnReorder}
@@ -204,6 +230,7 @@ class FixedDataTableRowImpl extends React.Component {
         width={fixedRightColumnsWidth}
         zIndex={2}
         columns={this.props.fixedRightColumns}
+        columnOffsets={this.props.fixedRightColumnOffsets}
         touchEnabled={this.props.touchEnabled}
         onColumnResize={this.props.onColumnResize}
         onColumnReorder={this.props.onColumnReorder}
@@ -218,6 +245,7 @@ class FixedDataTableRowImpl extends React.Component {
       this._renderFixedRightColumnsShadow(this.props.width - fixedRightColumnsWidth - scrollbarOffset - 5) : null;
     var scrollableColumns =
       <FixedDataTableCellGroup
+        allowColumnVirtualization={this.props.allowColumnVirtualization}
         key="scrollable_cells"
         isScrolling={this.props.isScrolling}
         height={this.props.height}
@@ -228,6 +256,8 @@ class FixedDataTableRowImpl extends React.Component {
         width={this.props.width - fixedColumnsWidth - fixedRightColumnsWidth - scrollbarOffset}
         zIndex={0}
         columns={this.props.scrollableColumns}
+        columnsToRender={this.props.columnsToRender}
+        columnOffsets={this.props.columnOffsets}
         touchEnabled={this.props.touchEnabled}
         onColumnResize={this.props.onColumnResize}
         onColumnReorder={this.props.onColumnReorder}

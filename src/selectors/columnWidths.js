@@ -48,21 +48,41 @@ function columnWidths(columnGroupProps, columnProps, scrollEnabledY, width) {
     newColumnGroupProps,
     newColumnProps,
   } = flexWidths(columnGroupProps, columnProps, viewportWidth);
+
   const {
     fixedColumns,
     fixedRightColumns,
     scrollableColumns,
-  } = groupColumns(newColumnProps);
+    fixedColumnGroups,
+    scrollableColumnGroups,
+    scrollableColumnGroupIndex,
+    columnGroupIndex,
+  } = groupColumns(newColumnProps, newColumnGroupProps);
 
-  const availableScrollWidth = viewportWidth - getTotalWidth(fixedColumns) - getTotalWidth(fixedRightColumns);
+  const {
+    fixedColumnOffsets,
+    fixedRightColumnOffsets,
+    fixedColumnGroupOffsets,
+    fixedRightColumnGroupOffsets,
+  } = columnOffsets(newColumnProps, newColumnGroupProps);
+
+  const availableScrollWidth = Math.max(viewportWidth - getTotalWidth(fixedColumns) - getTotalWidth(fixedRightColumns), 0);
   const maxScrollX = Math.max(0, getTotalWidth(newColumnProps) - viewportWidth);
   return {
+    columnGroupIndex: columnGroupIndex,
     columnGroupProps: newColumnGroupProps,
     columnProps: newColumnProps,
     availableScrollWidth,
     fixedColumns,
+    fixedColumnGroups,
+    fixedColumnGroupOffsets,
     fixedRightColumns,
+    fixedRightColumnGroupOffsets,
     scrollableColumns,
+    scrollableColumnGroups,
+    scrollableColumnGroupIndex,
+    fixedColumnOffsets,
+    fixedRightColumnOffsets,
     maxScrollX,
   };
 }
@@ -127,16 +147,22 @@ function flexWidths(columnGroupProps, columnProps, viewportWidth) {
 
 /**
  * @param {!Array.<columnDefinition>} columnProps
+ * @param {!Array.<columnDefinition>} columnGroupProps
  * @return {{
  *   fixedColumns: !Array.<columnDefinition>,
  *   fixedRightColumns: !Array.<columnDefinition>,
  *   scrollableColumns: !Array.<columnDefinition>
  * }}
  */
-function groupColumns(columnProps) {
+function groupColumns(columnProps, columnGroupProps) {
   const fixedColumns = [];
+  const fixedColumnGroups = [];
   const fixedRightColumns = [];
+  const fixedRightColumnGroups = [];
   const scrollableColumns = [];
+  const scrollableColumnGroups = [];
+  const columnGroupIndex = [];
+  const scrollableColumnGroupIndex = [];
 
   forEach(columnProps, columnProp => {
     let container = scrollableColumns;
@@ -148,10 +174,80 @@ function groupColumns(columnProps) {
     container.push(columnProp);
   });
 
+  forEach(columnGroupProps, (columnProp, index) => {
+    let container = scrollableColumnGroups;
+    if (columnProp.fixed) {
+      container = fixedColumnGroups;
+    } else if (columnProp.fixedRight) {
+      container = fixedRightColumnGroups;
+    } else {
+      scrollableColumnGroupIndex.push(index);
+    }
+    columnGroupIndex[index] = container.length;
+    container.push(columnProp);
+  });
+
   return {
     fixedColumns,
+    fixedColumnGroups,
     fixedRightColumns,
+    fixedRightColumnGroups,
     scrollableColumns,
+    scrollableColumnGroups,
+    columnGroupIndex,
+    scrollableColumnGroupIndex,
+  };
+}
+
+/**
+ * @param {!Array.<columnDefinition>} columnProps
+ * @param {!Array.<columnDefinition>} columnGroupProps
+ * @return {{
+ *   fixedColumnOffsets: !Array.<number>,
+ *   fixedRightColumnOffsets: !Array.<number>.
+ *   fixedColumnGroupOffsets: !Array.<number>.
+ *   fixedRightColumnGroupOffsets: !Array.<number>
+ * }}
+ */
+function columnOffsets(columnProps, columnGroupProps) {
+  const fixedColumnOffsets = [];
+  const fixedRightColumnOffsets = [];
+  const fixedColumnGroupOffsets = [];
+  const fixedRightColumnGroupOffsets = [];
+
+  // calculate offsets for columns
+  let offsetFixed = 0;
+  let offsetFixedRight = 0;
+
+  forEach(columnProps, columnProp => {
+    if (columnProp.fixed) {
+      fixedColumnOffsets.push(offsetFixed);
+      offsetFixed += columnProp.width;
+    } else if (columnProp.fixedRight) {
+      fixedRightColumnOffsets.push(offsetFixedRight);
+      offsetFixedRight += columnProp.width;
+    }
+  });
+
+  // calculate offsets for column groups
+  offsetFixed = 0;
+  offsetFixedRight = 0;
+
+  forEach(columnGroupProps, columnGroupProp => {
+    if (columnGroupProp.fixed) {
+      fixedColumnGroupOffsets.push(offsetFixed);
+      offsetFixed += columnGroupProp.width;
+    } else if (columnGroupProp.fixedRight) {
+      fixedRightColumnGroupOffsets.push(offsetFixedRight);
+      offsetFixedRight += columnGroupProp.width;
+    }
+  });
+
+  return {
+    fixedColumnOffsets,
+    fixedRightColumnOffsets,
+    fixedColumnGroupOffsets,
+    fixedRightColumnGroupOffsets,
   };
 }
 

@@ -429,6 +429,13 @@ class FixedDataTable extends React.Component {
      * half of the number of visible rows.
      */
     bufferRowCount: PropTypes.number,
+
+    /**
+     * Turn on column virtualization so that columns inside the viewport are rendered,
+     * regardless of allowCellsRecycling. This has a noticeable performance boost when
+     * there exists large number of columns in the table.
+     */
+    allowColumnVirtualization: PropTypes.bool,
   }
 
   static defaultProps = /*object*/ {
@@ -629,10 +636,19 @@ class FixedDataTable extends React.Component {
     } = tableHeightsSelector(this.props);
 
     const {
+      allowColumnVirtualization,
       className,
+      columnOffsets,
+      columnGroupOffsets,
       columnReorderingData,
       columnResizingData,
+      columnGroupsToRender,
+      columnsToRender,
       elementHeights,
+      fixedColumnOffsets,
+      fixedColumnGroupOffsets,
+      fixedRightColumnOffsets,
+      fixedRightColumnGroupOffsets,
       isColumnReordering,
       isColumnResizing,
       maxScrollX,
@@ -656,6 +672,7 @@ class FixedDataTable extends React.Component {
     if (groupHeaderHeight > 0) {
       groupHeader = (
         <FixedDataTableRow
+          allowColumnVirtualization={allowColumnVirtualization}
           key="group_header"
           isScrolling={scrolling}
           className={joinClasses(
@@ -672,6 +689,10 @@ class FixedDataTable extends React.Component {
           fixedColumns={fixedColumnGroups}
           fixedRightColumns={fixedRightColumnGroups}
           scrollableColumns={scrollableColumnGroups}
+          columnOffsets={columnGroupOffsets}
+          columnsToRender={columnGroupsToRender}
+          fixedColumnOffsets={fixedColumnGroupOffsets}
+          fixedRightColumnOffsets={fixedRightColumnGroupOffsets}
           visible={true}
           onColumnResize={this._onColumnResize}
           onColumnReorder={onColumnReorder}
@@ -726,6 +747,7 @@ class FixedDataTable extends React.Component {
     if (footerHeight) {
       footer =
         <FixedDataTableRow
+          allowColumnVirtualization={allowColumnVirtualization}
           key="footer"
           isScrolling={scrolling}
           className={joinClasses(
@@ -741,6 +763,10 @@ class FixedDataTable extends React.Component {
           fixedColumns={fixedColumns.footer}
           fixedRightColumns={fixedRightColumns.footer}
           scrollableColumns={scrollableColumns.footer}
+          columnsToRender={columnsToRender}
+          columnOffsets={columnOffsets}
+          fixedColumnOffsets={fixedColumnOffsets}
+          fixedRightColumnOffsets={fixedRightColumnOffsets}
           scrollLeft={scrollX}
           showScrollbarY={scrollEnabledY}
         />;
@@ -751,6 +777,7 @@ class FixedDataTable extends React.Component {
 
     const header =
       <FixedDataTableRow
+        allowColumnVirtualization={allowColumnVirtualization}
         key="header"
         isScrolling={scrolling}
         className={joinClasses(
@@ -765,6 +792,10 @@ class FixedDataTable extends React.Component {
         offsetTop={groupHeaderHeight}
         scrollLeft={scrollX}
         visible={true}
+        columnOffsets={columnOffsets}
+        columnsToRender={columnsToRender}
+        fixedColumnOffsets={fixedColumnOffsets}
+        fixedRightColumnOffsets={fixedRightColumnOffsets}
         fixedColumns={fixedColumns.header}
         fixedRightColumns={fixedRightColumns.header}
         scrollableColumns={scrollableColumns.header}
@@ -852,12 +883,17 @@ class FixedDataTable extends React.Component {
     const props = this.props;
     return (
       <FixedDataTableBufferedRows
+        allowColumnVirtualization={props.allowColumnVirtualization}
         isScrolling={props.scrolling}
         fixedColumns={fixedCellTemplates}
         fixedRightColumns={fixedRightCellTemplates}
         firstViewportRowIndex={props.firstRowIndex}
         endViewportRowIndex={props.endRowIndex}
         height={bodyHeight}
+        columnsToRender={props.columnsToRender}
+        columnOffsets={props.columnOffsets}
+        fixedColumnOffsets={props.fixedColumnOffsets}
+        fixedRightColumnOffsets={props.fixedRightColumnOffsets}
         offsetTop={offsetTop}
         onRowClick={props.onRowClick}
         onRowContextMenu={props.onRowContextMenu}

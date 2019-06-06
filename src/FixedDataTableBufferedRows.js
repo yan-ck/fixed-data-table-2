@@ -20,11 +20,15 @@ import inRange from 'lodash/inRange';
 
 class FixedDataTableBufferedRows extends React.Component {
   static propTypes = {
+    allowColumnVirtualization: PropTypes.bool,
     isScrolling: PropTypes.bool,
     firstViewportRowIndex: PropTypes.number.isRequired,
     endViewportRowIndex: PropTypes.number.isRequired,
-    fixedColumns: PropTypes.array.isRequired,
+    columnsToRender: PropTypes.array.isRequired,
     fixedRightColumns: PropTypes.array.isRequired,
+    columnOffsets: PropTypes.object.isRequired,
+    fixedColumnOffsets: PropTypes.array.isRequired,
+    fixedRightColumnOffsets: PropTypes.array.isRequired,
     height: PropTypes.number.isRequired,
     offsetTop: PropTypes.number.isRequired,
     onRowClick: PropTypes.func,
@@ -147,6 +151,10 @@ class FixedDataTableBufferedRows extends React.Component {
         width={props.width}
         rowExpanded={props.rowExpanded}
         scrollLeft={Math.round(props.scrollLeft)}
+        columnsToRender={props.columnsToRender}
+        columnOffsets={props.columnOffsets}
+        fixedColumnOffsets={props.fixedColumnOffsets}
+        fixedRightColumnOffsets={props.fixedRightColumnOffsets}
         fixedColumns={props.fixedColumns}
         fixedRightColumns={props.fixedRightColumns}
         scrollableColumns={props.scrollableColumns}
@@ -163,6 +171,7 @@ class FixedDataTableBufferedRows extends React.Component {
         showScrollbarY={props.showScrollbarY}
         visible={visible}
         fake={fake}
+        allowColumnVirtualization={props.allowColumnVirtualization}
         {...rowProps}
       />
     );
