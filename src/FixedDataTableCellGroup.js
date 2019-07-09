@@ -245,6 +245,7 @@ class FixedDataTableCellGroupImpl extends React.Component {
         columnKey={columnProps.columnKey || columnIndex}
         width={columnProps.width}
         left={currentPosition}
+        top={0}
         cell={cellTemplate}
         cellGroupWidth={cellGroupWidth}
         pureRendering={pureRendering}

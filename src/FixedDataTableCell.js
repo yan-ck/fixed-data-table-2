@@ -76,6 +76,11 @@ class FixedDataTableCell extends React.Component {
     left: PropTypes.number,
 
     /**
+     * The top offset in pixels of the cell.
+     */
+    top: PropTypes.number,
+
+    /**
      * Flag for enhanced performance check
      */
     pureRendering: PropTypes.bool,
@@ -96,6 +101,10 @@ class FixedDataTableCell extends React.Component {
     isReorderingThisColumn: false,
     displacement: 0,
     reorderingDisplacement: 0
+  }
+
+  componentDidMount() {
+    console.log('c');
   }
 
   shouldComponentUpdate(nextProps) {
@@ -219,7 +228,7 @@ class FixedDataTableCell extends React.Component {
   }
 
   render() /*object*/ {
-    var { height, width, visible, columnKey, ...props } = this.props;
+    var { height, width, visible, columnKey, top, ...props } = this.props;
     var style = {
       display: visible ? 'block' : 'none',
       height,
@@ -233,7 +242,7 @@ class FixedDataTableCell extends React.Component {
       style.zIndex = 1;
     }
 
-    FixedDataTableTranslateDOMPosition(style, left, 0, false);
+    FixedDataTableTranslateDOMPosition(style, left, top, false);
 
     var className = joinClasses(
       cx({

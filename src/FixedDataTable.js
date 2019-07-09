@@ -13,6 +13,7 @@
 
 /*eslint no-bitwise:1*/
 
+import FixedDataTableBufferedCells from 'FixedDataTableBufferedCells';
 import FixedDataTableBufferedRows from 'FixedDataTableBufferedRows';
 import ColumnResizerLine from 'ColumnResizerLine';
 import FixedDataTableEventHelper from 'FixedDataTableEventHelper';
@@ -872,16 +873,16 @@ class FixedDataTable extends React.Component {
     const { scrollEnabledY } = scrollbarsVisible(this.props);
     const props = this.props;
     return (
-      <FixedDataTableBufferedRows
+      <FixedDataTableBufferedCells
+      //<FixedDataTableBufferedRows
         allowColumnVirtualization={props.allowColumnVirtualization}
         isScrolling={props.scrolling}
-        fixedColumns={fixedCellTemplates}
-        fixedRightColumns={fixedRightCellTemplates}
         firstViewportRowIndex={props.firstRowIndex}
         endViewportRowIndex={props.endRowIndex}
         height={bodyHeight}
         columnsToRender={props.columnsToRender}
         columnOffsets={props.columnOffsets}
+        offsetLeft={0}
         offsetTop={offsetTop}
         onRowClick={props.onRowClick}
         onRowContextMenu={props.onRowContextMenu}
@@ -899,7 +900,7 @@ class FixedDataTable extends React.Component {
         rowSettings={props.rowSettings}
         scrollLeft={props.scrollX}
         scrollTop={props.scrollY}
-        scrollableColumns={scrollableCellTemplates}
+        columns={scrollableCellTemplates}
         showLastRowBorder={true}
         width={props.tableSize.width}
         rowsToRender={props.rowsToRender}
