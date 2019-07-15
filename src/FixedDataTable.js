@@ -18,6 +18,7 @@ import FixedDataTableBufferedRows from 'FixedDataTableBufferedRows';
 import ColumnResizerLine from 'ColumnResizerLine';
 import FixedDataTableEventHelper from 'FixedDataTableEventHelper';
 import FixedDataTableRow from 'FixedDataTableRow';
+import FixedDataTableRow2 from 'FixedDataTableRow2';
 import React from 'react';
 import PropTypes from 'prop-types';
 import ReactTouchHandler from 'ReactTouchHandler';
@@ -669,7 +670,7 @@ class FixedDataTable extends React.Component {
     let groupHeader;
     if (groupHeaderHeight > 0) {
       groupHeader = (
-        <FixedDataTableRow
+        <FixedDataTableRow2
           allowColumnVirtualization={allowColumnVirtualization}
           key="group_header"
           isScrolling={scrolling}
@@ -743,7 +744,7 @@ class FixedDataTable extends React.Component {
     let footer = null;
     if (footerHeight) {
       footer =
-        <FixedDataTableRow
+        <FixedDataTableRow2
           allowColumnVirtualization={allowColumnVirtualization}
           key="footer"
           isScrolling={scrolling}
@@ -772,7 +773,7 @@ class FixedDataTable extends React.Component {
       scrollableColumns.cell, bodyHeight);
 
     const header =
-      <FixedDataTableRow
+      <FixedDataTableRow2
         allowColumnVirtualization={allowColumnVirtualization}
         key="header"
         isScrolling={scrolling}
@@ -877,8 +878,8 @@ class FixedDataTable extends React.Component {
     const { scrollEnabledY } = scrollbarsVisible(this.props);
     const props = this.props;
     return (
-      <FixedDataTableBufferedCells
-      //<FixedDataTableBufferedRows
+      //<FixedDataTableBufferedCells
+      <FixedDataTableBufferedRows
         allowColumnVirtualization={props.allowColumnVirtualization}
         isScrolling={props.scrolling}
         firstViewportRowIndex={props.firstRowIndex}
@@ -886,6 +887,8 @@ class FixedDataTable extends React.Component {
         height={bodyHeight}
         columnsToRender={props.columnsToRender}
         columnOffsets={props.columnOffsets}
+        fixedColumns={fixedCellTemplates}
+        fixedRightColumns={fixedRightCellTemplates}
         offsetLeft={0}
         offsetTop={offsetTop}
         onRowClick={props.onRowClick}

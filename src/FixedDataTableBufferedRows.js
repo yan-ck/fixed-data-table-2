@@ -11,6 +11,8 @@
  */
 
 import FixedDataTableRow from 'FixedDataTableRow';
+import FixedDataTableRow2 from 'FixedDataTableRow2';
+import FixedDataTableTranslateDOMPosition from 'FixedDataTableTranslateDOMPosition';
 import PropTypes from 'prop-types';
 import React from 'react';
 import cx from 'cx';
@@ -79,44 +81,64 @@ class FixedDataTableBufferedRows extends React.Component {
     this._staticRowArray.length = 0;
   }
 
-  render() /*object*/ {
-    let { offsetTop, scrollTop, isScrolling, rowsToRender } = this.props;
-    const baseOffsetTop = offsetTop - scrollTop;
+  render() /*object*/{
+    this._staticRowArray = this._computeVirtualizedRows();
+
+    return (
+      <div style={this._getStyle()}>
+        {this._staticRowArray}
+      </div>
+    );
+  }
+
+  _getStyle() {
+    const {
+      offsetLeft,
+      offsetTop,
+      scrollLeft,
+      scrollTop,
+    } = this.props;
+
+    return FixedDataTableTranslateDOMPosition({}, offsetLeft - scrollLeft, offsetTop - scrollTop, false);
+  }
+
+  _computeVirtualizedRows() {
+    let { isScrolling, rowsToRender } = this.props;
     rowsToRender = rowsToRender || [];
+    let virtualizedRows = [];
 
     if (isScrolling) {
       // allow static array to grow while scrolling
-      this._staticRowArray.length = Math.max(this._staticRowArray.length, rowsToRender.length);
+      virtualizedRows.length = Math.max(this._staticRowArray.length, rowsToRender.length);
     } else {
       // when scrolling is done, static array can shrink to fit the buffer
-      this._staticRowArray.length = rowsToRender.length;
+      virtualizedRows.length = rowsToRender.length;
     }
 
     // render each row from the buffer into the static row array
-    for (let i = 0; i < this._staticRowArray.length; i++) {
+    for (let i = 0; i < virtualizedRows.length; i++) {
       let rowIndex = rowsToRender[i];
+
       // if the row doesn't exist in the buffer set, then take the previous one
       if (rowIndex === undefined) {
         rowIndex = this._staticRowArray[i] && this._staticRowArray[i].props.index;
       }
 
-      this._staticRowArray[i] = this.renderRow({
+      virtualizedRows[i] = this._renderRow(
         rowIndex,
-        key: i,
-        baseOffsetTop,
-      });
+        i
+      );
     }
 
-    return <div> {this._staticRowArray} </div>;
+    return virtualizedRows;
   }
 
   /**
    * @param {number} rowIndex
    * @param {number} key
-   * @param {number} baseOffsetTop
    * @return {!Object}
    */
-  renderRow({ rowIndex, key, baseOffsetTop }) /*object*/ {
+  _renderRow(rowIndex, key) /*object*/ {
     const props = this.props;
     const rowClassNameGetter = props.rowClassNameGetter || emptyFunction;
     const fake = rowIndex === undefined;
@@ -126,7 +148,7 @@ class FixedDataTableBufferedRows extends React.Component {
     if (!fake) {
       rowProps.height = this.props.rowSettings.rowHeightGetter(rowIndex);
       rowProps.subRowHeight = this.props.rowSettings.subRowHeightGetter(rowIndex);
-      rowProps.offsetTop = Math.round(baseOffsetTop + props.rowOffsets[rowIndex]);
+      rowProps.offsetTop = props.rowOffsets[rowIndex];
       rowProps.key = props.rowKeyGetter ? props.rowKeyGetter(rowIndex) : key;
 
       const hasBottomBorder = (rowIndex === props.rowSettings.rowsCount - 1) && props.showLastRowBorder;
@@ -143,7 +165,7 @@ class FixedDataTableBufferedRows extends React.Component {
     const visible = inRange(rowIndex, this.props.firstViewportRowIndex, this.props.endViewportRowIndex);
 
     return (
-      <FixedDataTableRow
+      <FixedDataTableRow2
         key={key}
         index={rowIndex}
         isScrolling={props.isScrolling}

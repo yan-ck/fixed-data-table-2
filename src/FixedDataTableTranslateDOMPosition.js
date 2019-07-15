@@ -12,9 +12,9 @@
 
 import translateDOMPositionXY from 'translateDOMPositionXY';
 
-function FixedDataTableTranslateDOMPosition(/*object*/ style, /*number*/ x, /*number*/ y, /*boolean*/ initialRender = false) {
+function FixedDataTableTranslateDOMPosition(/*object*/ style, /*number*/ x, /*number*/ y, /*boolean*/ initialRender = false) /*object*/ {
   if (style.display === 'none') {
-    return;
+    return style;
   }
   if (initialRender) {
     style.left = x + 'px';
@@ -22,7 +22,7 @@ function FixedDataTableTranslateDOMPosition(/*object*/ style, /*number*/ x, /*nu
   } else {
     translateDOMPositionXY(style, x, y);
   }
-
+  return style;
 }
 
 module.exports = FixedDataTableTranslateDOMPosition;
