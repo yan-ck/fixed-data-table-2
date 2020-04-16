@@ -184,7 +184,6 @@ Discussion
 
 Join our [discord server](https://discord.gg/bPSWD73)
 
-<a name="contributions"/> 
 
 Contributions
 ------------
