@@ -1096,7 +1096,7 @@ class FixedDataTable extends React.Component {
     let x = scrollX;
     let y = scrollY;
     if (Math.abs(deltaY) > Math.abs(deltaX) && overflowY !== 'hidden') {
-      y += deltaY;
+      y += 0;
       y = y < 0 ? 0 : y;
       y = y > maxScrollY ? maxScrollY : y;
 
@@ -1105,7 +1105,7 @@ class FixedDataTable extends React.Component {
         scrollActions.scrollToY(y);
       }
     } else if (deltaX && overflowX !== 'hidden') {
-      x += deltaX;
+      x += 0;
       x = x < 0 ? 0 : x;
       x = x > maxScrollX ? maxScrollX : x;
 
